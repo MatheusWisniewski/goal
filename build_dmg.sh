@@ -15,28 +15,27 @@ echo "Generating ICNS Icon..."
 chmod +x make_icns.sh
 ./make_icns.sh
 
-# 3. Run PyInstaller
+# 3. Run PyInstaller (Builds dist/DataLabeler.app directly)
 echo "Running PyInstaller..."
-pyinstaller --noconfirm --onedir --windowed \
+pyinstaller --noconfirm --clean --windowed \
+  --name "DataLabeler" \
+  --icon "AppIcon.icns" \
   --add-data "app.py:." \
   --hidden-import "llama_cpp" \
   --hidden-import "streamlit" \
   entrypoint.py
 
-# 4. Create Platypus App Bundle (with dynamic version)
-echo "Creating Platypus App..."
-platypus \
-  --name "DataLabeler" \
-  --app-version "$VERSION" \
-  --interface-type "Progress Bar" \
-  --interpreter "/bin/bash" \
-  --app-icon "AppIcon.icns" \
-  --bundle-identifier "com.datalabeler.mac" \
-  --files "app.py|models/gemma-2-2b-it-Q4_K_M.gguf|dist/entrypoint" \
-  launcher.sh \
-  DataLabeler.app
+# 4. Embed Gemma Model & Scripts into .app Resources
+echo "Embedding Model into App Bundle..."
+APP_RESOURCES="dist/DataLabeler.app/Contents/Resources"
+mkdir -p "$APP_RESOURCES/models"
 
-# 5. Package DMG (with dynamic filename & volume name)
+if [ -f "models/gemma-2-2b-it-Q4_K_M.gguf" ]; then
+    cp "models/gemma-2-2b-it-Q4_K_M.gguf" "$APP_RESOURCES/models/"
+fi
+cp "app.py" "$APP_RESOURCES/"
+
+# 5. Package DMG
 echo "Packaging DMG..."
 create-dmg \
   --volname "DataLabeler v${VERSION} Installer" \
@@ -47,6 +46,6 @@ create-dmg \
   --app-drop-link 480 170 \
   --overwrite \
   "DataLabeler-v${VERSION}.dmg" \
-  "DataLabeler.app"
+  "dist/DataLabeler.app"
 
 echo "Build Complete: DataLabeler-v${VERSION}.dmg"
