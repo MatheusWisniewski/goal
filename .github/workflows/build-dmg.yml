@@ -11,6 +11,8 @@ on:
 jobs:
   build-macos:
     runs-on: macos-latest
+    permissions:
+      contents: write # Grants permission to create GitHub Releases
 
     steps:
       - name: Checkout Repository
@@ -29,7 +31,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pillow # Required for make_icns.sh
+          pip install pillow
 
       - name: Download Gemma Model Weights
         run: |
@@ -42,9 +44,12 @@ jobs:
           chmod +x build_dmg.sh make_icns.sh
           ./build_dmg.sh
 
-      - name: Upload DMG as GitHub Artifact
-        uses: actions/upload-artifact@v4
+      # Publish to permanent GitHub Release when a tag (e.g. v1.0.0) is pushed
+      - name: Publish to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
         with:
-          name: DataLabeler-Installer
-          path: "*.dmg"
-          retention-days: 7
+          files: "*.dmg"
+          body_path: version.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
