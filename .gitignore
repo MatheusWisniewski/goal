@@ -1,0 +1,23 @@
+# Byte-compiled / Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# macOS system files
+.DS_Store
+
+# Large Model Weights & Local Models
+models/*.gguf
+*.gguf
+
+# Build & Packaging Output
+build/
+dist/
+*.app
+*.dmg
+*.icns
+AppIcon.iconset/
+*.spec
