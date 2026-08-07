@@ -1,0 +1,5 @@
+streamlit>=1.30.0
+pandas>=2.0.0
+requests>=2.31.0
+llama-cpp-python>=0.2.50
+pyinstaller>=6.0.0
