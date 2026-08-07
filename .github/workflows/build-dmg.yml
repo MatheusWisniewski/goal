@@ -1,0 +1,50 @@
+name: Build macOS DMG
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  build-macos:
+    runs-on: macos-latest # Runs on a real macOS Apple Silicon/Intel VM
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install macOS Build Tools via Homebrew
+        run: |
+          brew install create-dmg platypus
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Download Gemma Model Weights
+        run: |
+          mkdir -p models
+          # Downloads Gemma 2 2B GGUF directly into the build environment
+          curl -L -o models/gemma-2-2b-it-Q4_K_M.gguf \
+            "https://huggingface.co/bartowski/gemma-2-2b-it-GGUF/resolve/main/gemma-2-2b-it-Q4_K_M.gguf"
+
+      - name: Run Master DMG Build Script
+        run: |
+          chmod +x build_dmg.sh make_icns.sh
+          ./build_dmg.sh
+
+      - name: Upload DMG as GitHub Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DataLabeler-Installer
+          path: "*.dmg"
+          retention-days: 7
