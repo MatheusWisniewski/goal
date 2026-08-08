@@ -1,5 +1,5 @@
 {
-  "version": "1.0.1",
+  "version": "1.0.2",
   "script_url": "https://raw.githubusercontent.com/matheuswisniewski/goal/main/app.py",
   "notes": "- Initial release of Offline CSV Data Labeler\n- Powered by Gemma 2 2B\n- Metal GPU accelerated (if M1+)"
 }
