@@ -9,11 +9,11 @@ from llama_cpp import Llama
 CURRENT_VERSION = "1.0.0"
 VERSION_URL = "https://raw.githubusercontent.com/matheuswisniewski/goal/main/version.json"
 
-APP_DIR = os.path.expanduser("~/Library/Application Support/DataLabeler")
+APP_DIR = os.path.expanduser("~/Library/Application Support/GoalDataLabeler")
 LOCAL_APP_PATH = os.path.join(APP_DIR, "app.py")
 
 st.set_page_config(
-    page_title="Offline CSV Labeler",
+    page_title="Goal Data Labeler",
     page_icon="🏷️",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -74,20 +74,19 @@ with st.sidebar:
             st.session_state["update_available"] = None
             st.rerun()
 
-# --- Model Loading ---
+# --- Model Loading with Intel Fallback ---
 @st.cache_resource
 def load_gemma():
-    # Looks for model in App Support or relative build dir
     model_path = os.path.join(APP_DIR, "models", "gemma-2-2b-it-Q4_K_M.gguf")
     if not os.path.exists(model_path):
         model_path = "./models/gemma-2-2b-it-Q4_K_M.gguf"
         
-    return Llama(
-        model_path=model_path,
-        n_ctx=2048,
-        n_gpu_layers=-1,  # Full Metal acceleration
-        verbose=False
-    )
+    try:
+        # Try GPU / Metal Acceleration (Apple Silicon or Intel Macs with Metal)
+        return Llama(model_path=model_path, n_ctx=2048, n_gpu_layers=-1, verbose=False)
+    except Exception:
+        # Fallback to CPU execution for older Intel Macs
+        return Llama(model_path=model_path, n_ctx=2048, n_gpu_layers=0, verbose=False)
 
 try:
     llm = load_gemma()
@@ -124,8 +123,8 @@ def process_label(prompt):
         return raw.replace('{"label":', '').replace('}', '').replace('"', '').strip()
 
 # --- UI Flow ---
-st.title("🏷️ Offline CSV Data Labeler")
-st.caption("Powered by Gemma 2 • Metal Accelerated")
+st.title("🏷️ Goal Data Labeler")
+st.caption("Powered by Gemma 2 • Offline Local Intelligence")
 
 uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
 
