@@ -1,4 +1,4 @@
-name: Build macOS DMG
+name: Build macOS DMGs
 
 on:
   push:
@@ -10,9 +10,17 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-latest
+    name: Build macOS (${{ matrix.arch }})
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            arch: AppleSilicon
+          - os: macos-13
+            arch: Intel
+    runs-on: ${{ matrix.os }}
     permissions:
-      contents: write # Grants permission to create GitHub Releases
+      contents: write
 
     steps:
       - name: Checkout Repository
@@ -44,7 +52,13 @@ jobs:
           chmod +x build_dmg.sh make_icns.sh
           ./build_dmg.sh
 
-      # Publish to permanent GitHub Release when a tag (e.g. v1.0.0) is pushed
+      - name: Upload DMG as GitHub Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GoalDataLabeler-${{ matrix.arch }}
+          path: "*.dmg"
+          retention-days: 7
+
       - name: Publish to GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
