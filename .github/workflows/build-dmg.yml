@@ -2,11 +2,9 @@ name: Build macOS DMGs
 
 on:
   push:
-    branches:
-      - main
     tags:
       - "v*"
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
 
 jobs:
   build-macos:
@@ -60,7 +58,6 @@ jobs:
           retention-days: 7
 
       - name: Publish to GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: "*.dmg"
