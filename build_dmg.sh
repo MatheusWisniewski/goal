@@ -7,16 +7,7 @@ if [ ! -f "version.json" ]; then
 fi
 
 VERSION=$(python3 -c "import json; print(json.load(open('version.json'))['version'])")
-
-# Detect CPU architecture (arm64 or x86_64)
-ARCH=$(uname -m)
-if [ "$ARCH" = "arm64" ]; then
-    ARCH_NAME="AppleSilicon"
-else
-    ARCH_NAME="Intel"
-fi
-
-echo "Starting build for Goal Data Labeler v${VERSION} (${ARCH_NAME})..."
+echo "Starting build for Goal Data Labeler v${VERSION} (Apple Silicon)..."
 
 echo "Generating ICNS Icon..."
 chmod +x make_icns.sh
@@ -40,16 +31,16 @@ if [ -f "models/gemma-2-2b-it-Q4_K_M.gguf" ]; then
 fi
 cp "app.py" "$APP_RESOURCES/"
 
-echo "Packaging DMG for ${ARCH_NAME}..."
+echo "Packaging DMG..."
 create-dmg \
-  --volname "Goal Data Labeler v${VERSION} (${ARCH_NAME})" \
+  --volname "Goal Data Labeler v${VERSION} Installer" \
   --volicon "AppIcon.icns" \
   --window-size 660 400 \
   --icon-size 100 \
   --icon "Goal Data Labeler.app" 180 170 \
   --app-drop-link 480 170 \
   --overwrite \
-  "GoalDataLabeler-v${VERSION}-${ARCH_NAME}.dmg" \
+  "GoalDataLabeler-v${VERSION}.dmg" \
   "dist/Goal Data Labeler.app"
 
-echo "Build Complete: GoalDataLabeler-v${VERSION}-${ARCH_NAME}.dmg"
+echo "Build Complete: GoalDataLabeler-v${VERSION}.dmg"

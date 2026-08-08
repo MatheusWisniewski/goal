@@ -8,7 +8,7 @@ A 100% offline macOS desktop application for dynamic CSV data labeling powered b
 
 ## 📥 Download
 
-> **System Requirements:** Universal Mac support (Apple Silicon M1/M2/M3/M4 or Intel Macs running macOS 12+). No internet connection or terminal commands required.
+> **System Requirements:** Apple Silicon Mac (M1/M2/M3/M4) running macOS 12 or newer. Intel Macs are not supported.
 
 ### Quick Installation Guide
 

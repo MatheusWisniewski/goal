@@ -1,22 +1,14 @@
-name: Build macOS DMGs
+name: Build macOS DMG
 
 on:
   push:
     tags:
       - "v*"
-  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
 
 jobs:
   build-macos:
-    name: Build macOS (${{ matrix.arch }})
-    strategy:
-      matrix:
-        include:
-          - os: macos-latest
-            arch: AppleSilicon
-          - os: macos-13
-            arch: Intel
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
     permissions:
       contents: write
 
@@ -53,7 +45,7 @@ jobs:
       - name: Upload DMG as GitHub Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GoalDataLabeler-${{ matrix.arch }}
+          name: GoalDataLabeler-Installer
           path: "*.dmg"
           retention-days: 7
 
