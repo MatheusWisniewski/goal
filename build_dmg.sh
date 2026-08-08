@@ -13,9 +13,8 @@ echo "Generating ICNS Icon..."
 chmod +x make_icns.sh
 ./make_icns.sh
 
-echo "Running PyInstaller (Universal Binary: Apple Silicon + Intel)..."
+echo "Running PyInstaller..."
 pyinstaller --noconfirm --clean --windowed \
-  --target-arch universal2 \
   --name "Goal Data Labeler" \
   --icon "AppIcon.icns" \
   --add-data "app.py:." \
