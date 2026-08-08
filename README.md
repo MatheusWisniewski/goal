@@ -23,6 +23,6 @@ A 100% offline macOS desktop application for dynamic CSV data labeling powered b
 
 1. **Clone repository:**
    ```bash
-   git clone [https://github.com/matheuswisniewski/goal.git](https://github.com/matheuswisniewski/goal.git)
+   git clone https://github.com/matheuswisniewski/goal.git
    cd YOUR_REPO_NAME
    ```
